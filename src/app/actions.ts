@@ -23,6 +23,7 @@ const buildReturnPath = (options: {
   selectedMonth?: string;
   editId?: string;
   error?: string;
+  success?: string;
 }) => {
   const params = new URLSearchParams();
 
@@ -40,6 +41,10 @@ const buildReturnPath = (options: {
 
   if (options.error) {
     params.set("error", options.error);
+  }
+
+  if (options.success) {
+    params.set("success", options.success);
   }
 
   const query = params.toString();
@@ -88,7 +93,13 @@ export async function upsertEventAction(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect(buildReturnPath({ selectedMonth, selectedDate }));
+  redirect(
+    buildReturnPath({
+      selectedMonth,
+      selectedDate,
+      success: id ? "updated" : "created",
+    }),
+  );
 }
 
 export async function deleteEventAction(formData: FormData) {
@@ -101,5 +112,11 @@ export async function deleteEventAction(formData: FormData) {
     revalidatePath("/");
   }
 
-  redirect(buildReturnPath({ selectedMonth, selectedDate }));
+  redirect(
+    buildReturnPath({
+      selectedMonth,
+      selectedDate,
+      success: "deleted",
+    }),
+  );
 }

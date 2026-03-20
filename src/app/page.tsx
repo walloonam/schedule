@@ -15,6 +15,7 @@ type HomeProps = {
     date?: string;
     edit?: string;
     error?: string;
+    success?: string;
   }>;
 };
 
@@ -108,6 +109,22 @@ const isValidDateKey = (value: string | undefined) =>
 const isValidMonthKey = (value: string | undefined) =>
   Boolean(value && /^\d{4}-\d{2}$/.test(value));
 
+const getSuccessMessage = (value: string | undefined) => {
+  if (value === "created") {
+    return "일정이 저장되었어요.";
+  }
+
+  if (value === "updated") {
+    return "일정이 수정되었어요.";
+  }
+
+  if (value === "deleted") {
+    return "일정이 삭제되었어요.";
+  }
+
+  return null;
+};
+
 const buildDateRange = (dateKey: string) => {
   const start = new Date(`${dateKey}T00:00:00`);
   const end = new Date(start);
@@ -175,6 +192,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const formEndDefault = editingEvent?.endAt
     ? toLocalInputValue(editingEvent.endAt)
     : `${selectedDateKey}T10:00`;
+  const successMessage = getSuccessMessage(params.success);
 
   return (
     <main className="min-h-screen px-5 py-6 text-foreground sm:px-8 lg:px-12">
@@ -399,12 +417,17 @@ export default async function Home({ searchParams }: HomeProps) {
 
             {params.error === "missing" ? (
               <p className="mt-4 rounded-2xl bg-[#fff1ea] px-4 py-3 text-sm text-[#9c4f2d]">
-                Title, start time, and end time are required.
+                제목, 시작 시간, 종료 시간은 꼭 입력해야 해요.
               </p>
             ) : null}
             {params.error === "time" ? (
               <p className="mt-4 rounded-2xl bg-[#fff1ea] px-4 py-3 text-sm text-[#9c4f2d]">
-                End time must be the same as or later than the start time.
+                종료 시간은 시작 시간보다 빠를 수 없어요.
+              </p>
+            ) : null}
+            {successMessage ? (
+              <p className="mt-4 rounded-2xl bg-[#e6f5ea] px-4 py-3 text-sm text-[#236341]">
+                {successMessage}
               </p>
             ) : null}
 
