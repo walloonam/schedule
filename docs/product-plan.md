@@ -1,156 +1,157 @@
-# Personal Schedule Manager Product Plan
+# 개인 일정관리 앱 기획안
 
-## 1. Product Overview
+## 1. 제품 개요
 
-- Product name: Personal Schedule Manager
-- Goal: Build a lightweight personal scheduling app for fast daily planning and review.
-- Primary user: Single personal user
-- Main value: See monthly schedule at a glance, review today's items quickly, and manage events without friction.
+- 제품명: 개인 일정관리 앱
+- 목표: 빠르게 일정을 계획하고, 오늘 해야 할 일을 바로 확인할 수 있는 가벼운 개인용 일정 앱 만들기
+- 주요 사용자: 1인 개인 사용자
+- 핵심 가치: 월간 일정은 한눈에 보고, 오늘 일정은 빠르게 확인하고, 복잡하지 않게 일정을 관리할 수 있어야 함
 
-## 2. Requested Features
+## 2. 요청된 기능
 
-### Must Have
+### 꼭 필요한 기능
 
-- Monthly calendar view
-- Today view
-- Event create, edit, delete
+- 월간 달력 보기
+- 오늘 일정 보기
+- 일정 추가 / 수정 / 삭제
 
-### Nice to Have
+### 있으면 좋은 기능
 
-- Recurring events
-- Notification/reminder support
-- Tag classification
+- 반복 일정
+- 알림 / 리마인더
+- 태그 분류
 
-### Additional Requested Features
+### 추가 요청 기능
 
-- Todo checkbox support
-- Notes on events
+- 할 일 체크박스
+- 일정 메모
 
-## 3. Product Principles
+## 3. 제품 원칙
 
-- Optimize for personal speed over complex collaboration features.
-- Make the Today view the main working surface.
-- Keep event creation lightweight with a simple default form.
-- Use progressive disclosure for advanced options like recurrence, tags, and reminders.
-- Start narrow with a stable MVP, then add productivity features in phases.
+- 협업 기능보다 개인 사용 속도를 우선한다.
+- `Today` 화면을 실제 사용의 중심으로 둔다.
+- 일정 생성은 기본적으로 가볍고 빠르게 할 수 있어야 한다.
+- 반복 일정, 태그, 알림 같은 고급 기능은 필요할 때만 드러나게 한다.
+- 처음에는 MVP 범위를 좁게 잡고, 이후 단계적으로 확장한다.
 
-## 4. MVP Scope
+## 4. MVP 범위
 
-### In Scope
+### 포함 범위
 
-- Month grid calendar view
-- Date selection from the calendar
-- Today view listing current-day items
-- Event CRUD
-- Basic event fields:
-  - title
-  - start date/time
-  - end date/time
-  - all-day toggle
-  - notes
-- Basic validation and empty states
+- 월간 달력 그리드
+- 달력에서 날짜 선택
+- 오늘 일정 목록 보기
+- 일정 CRUD
+- 기본 일정 필드
+  - 제목
+  - 시작 일시
+  - 종료 일시
+  - 하루 종일 여부
+  - 메모
+- 기본 유효성 검사
+- 빈 상태 안내
 
-### Out of Scope for MVP
+### MVP 제외 범위
 
-- Recurring rules
-- Notifications/reminders
-- Tags
-- Advanced search/filter
+- 반복 일정 규칙
+- 알림 / 리마인더
+- 태그
+- 고급 검색 / 필터
 
-## 5. Planned Feature Phases
+## 5. 기능 단계 계획
 
-### Phase 1: MVP
+### 1단계: MVP
 
-- Monthly calendar
-- Today view
-- Event CRUD
-- Notes on events
-- All-day support
+- 월간 달력
+- Today 화면
+- 일정 CRUD
+- 일정 메모
+- 하루 종일 일정 지원
 
-### Phase 2: Productivity
+### 2단계: 생산성 기능
 
-- Recurring events
-- Todo checkbox behavior
-- Notifications/reminders
-- Search/filter overlay
+- 반복 일정
+- 할 일 체크박스 동작
+- 알림 / 리마인더
+- 검색 / 필터 오버레이
 
-### Phase 3: Organization
+### 3단계: 정리 기능
 
-- Tags
-- Richer views such as agenda/week
-- Recurring event exceptions/overrides
+- 태그
+- 주간 / 아젠다 같은 추가 뷰
+- 반복 일정 예외 / 개별 수정
 
-## 6. Core User Flows
+## 6. 핵심 사용자 흐름
 
-### Plan a Day
+### 하루 계획하기
 
-1. Open month calendar
-2. Select a date
-3. Add a new event
-4. Save and confirm it appears on the calendar
-5. Review it again in Today view when the date is current
+1. 월간 달력을 연다
+2. 날짜를 선택한다
+3. 새 일정을 추가한다
+4. 저장 후 달력에 반영된 것을 확인한다
+5. 해당 날짜가 오늘이 되면 Today 화면에서 다시 확인한다
 
-### Manage an Event
+### 일정 관리하기
 
-1. Open an event from calendar or Today view
-2. Edit fields or delete the event
-3. See updates reflected immediately across views
+1. 달력 또는 Today 화면에서 일정을 연다
+2. 내용을 수정하거나 삭제한다
+3. 변경 사항이 모든 화면에 바로 반영되는지 확인한다
 
-### Check Today's Schedule
+### 오늘 일정 확인하기
 
-1. Open Today view
-2. Review all items scheduled for the current day
-3. Jump into event detail or create a new item quickly
+1. Today 화면을 연다
+2. 오늘 잡혀 있는 일정을 확인한다
+3. 일정 상세로 들어가거나 새 일정을 빠르게 추가한다
 
-## 7. Core Screens
+## 7. 핵심 화면
 
-### Monthly Calendar
+### 월간 달력
 
-- Month navigation
-- Today shortcut
-- Day cells with event indicators
-- Selected date state
-- Quick add entry point
+- 월 이동
+- 오늘로 이동
+- 일정이 있는 날짜 표시
+- 선택된 날짜 상태 표시
+- 빠른 일정 추가 진입점
 
-### Today View
+### Today 화면
 
-- Vertical agenda of today's items
-- Time-ordered events
-- All-day section
-- Empty state with add action
+- 오늘 일정 세로 목록
+- 시간순 정렬
+- 하루 종일 일정 구역
+- 일정이 없을 때 안내 문구와 추가 버튼
 
-### Event Editor
+### 일정 편집 화면
 
-- Create/edit form
-- Title
-- Start/end date and time
-- All-day toggle
-- Notes
-- Save/delete actions
+- 생성 / 수정 공용 폼
+- 제목
+- 시작 / 종료 일시
+- 하루 종일 토글
+- 메모
+- 저장 / 삭제 액션
 
-### Future Screens
+### 추후 화면
 
-- Search/filter overlay
-- Expanded recurrence editor
-- Tag management
+- 검색 / 필터 오버레이
+- 반복 일정 편집기
+- 태그 관리
 
-## 8. Key UI Components
+## 8. 주요 UI 구성 요소
 
-- Top bar with month navigation and add action
-- Calendar grid
-- Agenda list
-- Quick add sheet or modal
-- Event form
-- Empty state blocks
+- 월 이동과 추가 버튼이 있는 상단 바
+- 달력 그리드
+- 일정 목록
+- 빠른 추가 모달 또는 패널
+- 일정 입력 폼
+- 빈 상태 안내 UI
 
-### Phase 2 Components
+### 2단계 이후 추가할 요소
 
-- Checkbox row for todo completion
-- Recurrence summary
-- Reminder controls
-- Tag chips
+- 할 일 체크박스 행
+- 반복 일정 요약 표시
+- 알림 설정 UI
+- 태그 칩
 
-## 9. Initial Data Model Direction
+## 9. 초기 데이터 모델 방향
 
 ### Event
 
@@ -160,8 +161,8 @@
 - `startAt`
 - `endAt`
 - `allDay`
-- `kind` (`EVENT` or `TODO`) for future todo support
-- `completedAt` nullable for future todo support
+- `kind` (`EVENT` 또는 `TODO`) - 향후 할 일 지원용
+- `completedAt` nullable - 향후 할 일 완료 처리용
 - `recurrenceRuleId` nullable
 - `timezone` nullable
 - `createdAt`
@@ -201,33 +202,33 @@
 - `sentAt` nullable
 - `createdAt`
 
-## 10. Data Modeling Guidance
+## 10. 데이터 모델링 가이드
 
-- Keep `Event` as the central table from the start.
-- Support both calendar events and todo-style items through one model.
-- Keep recurrence, tags, and notifications designed now but implement them after MVP.
-- Avoid generating recurring instances in the database initially.
-- Add recurring overrides later only when recurrence editing becomes necessary.
+- 처음부터 `Event`를 중심 테이블로 유지한다.
+- 일정과 할 일을 하나의 모델에서 함께 다룰 수 있게 설계한다.
+- 반복 일정, 태그, 알림은 지금 구조만 잡아두고 실제 구현은 MVP 이후로 미룬다.
+- 초반에는 반복 일정 인스턴스를 DB에 미리 펼쳐서 저장하지 않는다.
+- 반복 일정 개별 수정이 필요해질 때 예외 테이블을 추가한다.
 
-## 11. Recommended Tech Stack
+## 11. 추천 기술 스택
 
-- Frontend: Next.js + TypeScript
-- Styling: Tailwind CSS
-- Database: SQLite
+- 프론트엔드: Next.js + TypeScript
+- 스타일링: Tailwind CSS
+- 데이터베이스: SQLite
 - ORM: Prisma
 
-## 12. Build Order
+## 12. 개발 순서
 
-1. Set up app shell and basic project structure
-2. Implement database schema for MVP event model
-3. Build monthly calendar screen
-4. Build Today view
-5. Implement event CRUD flow
-6. Add notes and all-day handling
-7. Add recurrence, todo behavior, and reminders in a later iteration
+1. 앱 기본 구조와 레이아웃 준비
+2. MVP용 이벤트 데이터 구조 구현
+3. 월간 달력 화면 구현
+4. Today 화면 구현
+5. 일정 CRUD 연결
+6. 메모와 하루 종일 일정 처리
+7. 이후 반복 일정, 할 일, 알림 기능 추가
 
-## 13. Open Decisions
+## 13. 아직 결정이 필요한 부분
 
-- Should todo items appear in the same list as events in Today view from v1, or wait until Phase 2?
-- Should quick add support only title/date first, or full create form immediately?
-- Should recurrence be fully deferred, or included in the first development pass if implementation stays small?
+- 할 일 항목을 v1부터 Today 화면에 같이 보여줄지, 2단계로 미룰지
+- 빠른 추가를 제목 / 날짜만 먼저 받을지, 처음부터 전체 폼을 보여줄지
+- 반복 일정을 완전히 뒤로 미룰지, 구현이 작게 가능하면 초반에 넣을지

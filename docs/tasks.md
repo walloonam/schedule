@@ -1,49 +1,49 @@
-# Personal Schedule Manager Tasks
+# 개인 일정관리 앱 작업 목록
 
-## Current Goal
+## 현재 목표
 
-Set up the initial application and deliver the Phase 1 MVP foundation.
+초기 앱 구조를 만들고, 1차 MVP 기반을 안정적으로 완성하기
 
-## Phase 1: Project Setup
+## 1단계: 프로젝트 세팅
 
-- [x] Initialize Next.js + TypeScript + Tailwind project
-- [x] Add Prisma + SQLite
-- [x] Define initial `Event` model
-- [x] Create app layout and navigation shell
+- [x] Next.js + TypeScript + Tailwind 프로젝트 생성
+- [x] Prisma + SQLite 기반 추가
+- [x] 초기 `Event` 모델 방향 정리
+- [x] 기본 레이아웃 및 앱 구조 생성
 
-## Phase 2: MVP Screens
+## 2단계: MVP 화면
 
-- [x] Build monthly calendar view
-- [x] Build Today view
-- [x] Add empty states
-- [x] Add quick navigation between calendar and Today view
+- [x] 월간 달력 화면 만들기
+- [x] Today 화면 만들기
+- [x] 빈 상태 UI 추가
+- [x] Today 화면과 달력 사이 기본 흐름 연결
 
-## Phase 3: Event CRUD
+## 3단계: 일정 CRUD
 
-- [x] Create event form
-- [x] Support create event flow
-- [x] Support edit event flow
-- [x] Support delete event flow
-- [x] Add basic validation
+- [x] 일정 입력 폼 만들기
+- [x] 일정 생성 기능 연결
+- [x] 일정 수정 기능 연결
+- [x] 일정 삭제 기능 연결
+- [x] 기본 유효성 검사 추가
 
-## Phase 4: MVP Completion
+## 4단계: MVP 마무리
 
-- [ ] Support all-day events
-- [ ] Support notes field
-- [x] Verify event updates across views
-- [x] Add basic visual polish
+- [ ] 하루 종일 일정 동작 더 다듬기
+- [ ] 메모 기능 사용감 더 다듬기
+- [x] 화면 간 일정 반영 확인
+- [x] 기본 시각 완성도 보정
 
-## Recent Improvements
+## 최근 추가한 개선 사항
 
-- [x] Add selected-day calendar workflow
-- [x] Add previous/next month navigation
-- [x] Add Today jump in the calendar header
-- [x] Expand the calendar grid to a full 6-week layout
+- [x] 선택 날짜 중심 달력 흐름 추가
+- [x] 이전 달 / 다음 달 이동 추가
+- [x] 달력 헤더에 오늘로 이동 추가
+- [x] 달력 그리드를 6주 전체 레이아웃으로 확장
 
-## Later Phases
+## 이후 단계
 
-- [ ] Add recurring event support
-- [ ] Add todo checkbox behavior
-- [ ] Add notifications/reminders
-- [ ] Add tags and filters
-- [ ] Add week/agenda views
+- [ ] 반복 일정 지원
+- [ ] 할 일 체크박스 동작
+- [ ] 알림 / 리마인더
+- [ ] 태그와 필터
+- [ ] 주간 / 아젠다 뷰
