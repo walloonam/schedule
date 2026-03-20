@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { deleteEventAction, upsertEventAction } from "@/app/actions";
+import { DeleteEventButton } from "@/app/delete-event-button";
 import {
   getDatabaseFilePath,
   getEventById,
@@ -553,12 +554,7 @@ export default async function Home({ searchParams }: HomeProps) {
                           <input type="hidden" name="id" value={item.id} />
                           <input type="hidden" name="selectedMonth" value={visibleMonthKey} />
                           <input type="hidden" name="selectedDate" value={selectedDateKey} />
-                          <button
-                            type="submit"
-                            className="rounded-full bg-[#2b211a] px-4 py-2 text-sm text-white"
-                          >
-                            Delete
-                          </button>
+                          <DeleteEventButton title={item.title} />
                         </form>
                       </div>
                     </div>
