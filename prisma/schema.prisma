@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum EventKind {
+  EVENT
+  TODO
+}
+
+model Event {
+  id               String          @id @default(cuid())
+  title            String
+  notes            String?
+  startAt          DateTime
+  endAt            DateTime
+  allDay           Boolean         @default(false)
+  kind             EventKind       @default(EVENT)
+  completedAt      DateTime?
+  recurrenceRuleId String?
+  timezone         String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  recurrenceRule   RecurrenceRule? @relation(fields: [recurrenceRuleId], references: [id])
+  tags             EventTag[]
+  notifications    Notification[]
+
+  @@index([startAt])
+  @@index([kind])
+}
+
+model RecurrenceRule {
+  id              String   @id @default(cuid())
+  freq            String
+  interval        Int      @default(1)
+  byWeekday       String?
+  byMonthDay      Int?
+  byMonth         Int?
+  endAt           DateTime?
+  occurrenceCount Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  events          Event[]
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  color     String?
+  createdAt DateTime   @default(now())
+  events    EventTag[]
+}
+
+model EventTag {
+  eventId String
+  tagId   String
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, tagId])
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  eventId       String
+  offsetMinutes Int
+  channel       String   @default("LOCAL")
+  sentAt        DateTime?
+  createdAt     DateTime @default(now())
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
