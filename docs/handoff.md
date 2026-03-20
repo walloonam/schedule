@@ -16,7 +16,10 @@
 - Event create, edit, delete flows working through server actions
 - Month view shows saved event counts
 - Today view shows today's saved events
-- Saved event list shows upcoming records and edit/delete controls
+- Calendar day selection now updates the active date
+- Event form defaults to the selected calendar day
+- Selected-day event list filters records by the chosen date
+- Saved event list supports edit/delete from the selected day view
 
 ## Important Files
 
@@ -49,10 +52,10 @@
 
 ## Recommended Next Steps
 
-1. Make calendar day selection interactive
-2. Prefill the form when clicking a specific day
-3. Filter right-side event list by selected date
-4. Add stronger form validation and success feedback
+1. Add month navigation for previous/next month
+2. Improve feedback after save/delete
+3. Add selected-day summary or mini agenda in the calendar area
+4. Add stronger validation polish for all-day behavior
 5. Add recurring events later after the base CRUD flow is stable
 
 ## How To Continue On Another Computer
@@ -68,4 +71,4 @@
 
 ## Suggested Prompt For Next Session
 
-`Read docs/product-plan.md, docs/tasks.md, and docs/handoff.md, understand the current schedule app state, and continue with interactive calendar day selection and selected-day event filtering.`
+`Read docs/product-plan.md, docs/tasks.md, and docs/handoff.md, understand the current schedule app state, and continue with month navigation and selected-day UX improvements.`

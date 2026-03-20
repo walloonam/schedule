@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Schedule
 
-## Getting Started
+Personal schedule manager for single-user daily planning.
 
-First, run the development server:
+## Current Stack
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- local SQLite via `better-sqlite3`
+
+## Current Features
+
+- Monthly calendar overview
+- Today view
+- Event create, edit, delete
+- Notes on events
+- Local SQLite persistence
+- Click a calendar day to select it
+- Event form defaults to the selected day
+- Selected-day event filtering
+
+## Local Database
+
+- SQLite file path: `data/schedule.sqlite`
+- Extra SQLite files may also appear:
+  - `data/schedule.sqlite-wal`
+  - `data/schedule.sqlite-shm`
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npx next build --webpack
+```
 
-## Learn More
+Note:
+The default `next build` may fail in restricted environments because Turbopack can require capabilities that are blocked by sandboxing.
 
-To learn more about Next.js, take a look at the following resources:
+## Important Docs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `docs/product-plan.md`
+- `docs/tasks.md`
+- `docs/handoff.md`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Continue On Another Computer
 
-## Deploy on Vercel
+1. Clone this repository
+2. Run `npm install`
+3. Run `npm run dev`
+4. Read these docs first:
+   - `docs/product-plan.md`
+   - `docs/tasks.md`
+   - `docs/handoff.md`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Suggested Codex Prompt
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+docs/product-plan.md, docs/tasks.md, docs/handoff.md 읽고 현재 상태 파악한 뒤 이어서 작업해줘.
+```
+
+## Current Next Step
+
+- Add previous/next month navigation
+- Improve save/delete feedback
+- Refine selected-day workflow

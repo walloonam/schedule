@@ -3,6 +3,7 @@ import { deleteEventAction, upsertEventAction } from "@/app/actions";
 import {
   getDatabaseFilePath,
   getEventById,
+  listDayEvents,
   listMonthEvents,
   listTodayEvents,
   listUpcomingEvents,
@@ -10,6 +11,7 @@ import {
 
 type HomeProps = {
   searchParams?: Promise<{
+    date?: string;
     edit?: string;
     error?: string;
   }>;
@@ -27,6 +29,12 @@ const formatDayTitle = (date: Date) =>
   new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
+    day: "numeric",
+  }).format(date);
+
+const formatShortDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
     day: "numeric",
   }).format(date);
 
@@ -90,23 +98,47 @@ const buildEventCountMap = (events: { startAt: string }[]) => {
   return counts;
 };
 
+const isValidDateKey = (value: string | undefined) =>
+  Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value));
+
+const buildDateRange = (dateKey: string) => {
+  const start = new Date(`${dateKey}T00:00:00`);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 1);
+  return { start, end };
+};
+
 export default async function Home({ searchParams }: HomeProps) {
   const params = (await searchParams) ?? {};
   const now = new Date();
-  const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+  const todayKey = now.toISOString().slice(0, 10);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const selectedDateKey =
+    params.date && isValidDateKey(params.date) ? params.date : todayKey;
+  const selectedDateRange = buildDateRange(selectedDateKey);
 
   const monthEvents = listMonthEvents(monthStart.toISOString(), monthEnd.toISOString());
   const todayEvents = listTodayEvents(dayStart.toISOString(), dayEnd.toISOString());
   const upcomingEvents = listUpcomingEvents();
+  const selectedDayEvents = listDayEvents(
+    selectedDateRange.start.toISOString(),
+    selectedDateRange.end.toISOString(),
+  );
   const editingEvent = params.edit ? getEventById(params.edit) : null;
+  const selectedDate = new Date(`${selectedDateKey}T00:00:00`);
 
   const eventCountByDay = buildEventCountMap(monthEvents);
   const calendarDays = buildCalendarDays(now, eventCountByDay);
   const formTitle = editingEvent ? "Edit event" : "Quick add";
+  const formStartDefault = editingEvent?.startAt
+    ? toLocalInputValue(editingEvent.startAt)
+    : `${selectedDateKey}T09:00`;
+  const formEndDefault = editingEvent?.endAt
+    ? toLocalInputValue(editingEvent.endAt)
+    : `${selectedDateKey}T10:00`;
 
   return (
     <main className="min-h-screen px-5 py-6 text-foreground sm:px-8 lg:px-12">
@@ -161,11 +193,12 @@ export default async function Home({ searchParams }: HomeProps) {
 
               <div className="mt-2 grid grid-cols-7 gap-2">
                 {calendarDays.map((item) => (
-                  <div
+                  <Link
                     key={item.key}
+                    href={`/?date=${item.key}`}
                     className={[
-                      "flex min-h-24 flex-col rounded-3xl border px-3 py-3 sm:min-h-28",
-                      item.isToday
+                      "flex min-h-24 flex-col rounded-3xl border px-3 py-3 transition-transform duration-200 hover:-translate-y-0.5 sm:min-h-28",
+                      item.key === selectedDateKey
                         ? "border-accent bg-[#fff1ea] shadow-[0_16px_32px_rgba(214,104,60,0.16)]"
                         : "border-line bg-surface",
                       item.muted ? "text-[#b1a08f]" : "text-foreground",
@@ -174,7 +207,13 @@ export default async function Home({ searchParams }: HomeProps) {
                     <span className="text-sm font-medium">{item.day}</span>
                     <div className="mt-auto flex items-center justify-between">
                       <span className="text-[11px] text-ink-muted">
-                        {item.isToday ? "Today" : item.count ? "Planned" : ""}
+                        {item.key === selectedDateKey
+                          ? "Selected"
+                          : item.isToday
+                            ? "Today"
+                            : item.count
+                              ? "Planned"
+                              : ""}
                       </span>
                       {item.count ? (
                         <span className="rounded-full bg-[#efe3d4] px-2 py-1 text-[11px] font-medium text-[#734b2f]">
@@ -182,13 +221,13 @@ export default async function Home({ searchParams }: HomeProps) {
                         </span>
                       ) : null}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
               <div className="mt-5 rounded-[24px] border border-dashed border-line bg-[#fcf6ee] px-4 py-4 text-sm text-ink-muted">
                 {monthEvents.length > 0
-                  ? "Days with saved events are highlighted with a count badge."
+                  ? `Selected date: ${formatDayTitle(selectedDate)}`
                   : "No events saved for this month yet. Add your first event from the panel on the right."}
               </div>
             </section>
@@ -285,10 +324,15 @@ export default async function Home({ searchParams }: HomeProps) {
                 <h2 className="mt-2 text-2xl font-semibold">
                   {editingEvent ? "Update saved event" : "Create a new event"}
                 </h2>
+                <p className="mt-2 text-sm text-ink-muted">
+                  {editingEvent
+                    ? `Editing event on ${formatShortDate(new Date(editingEvent.startAt))}`
+                    : `New events will default to ${formatDayTitle(selectedDate)}`}
+                </p>
               </div>
               {editingEvent ? (
                 <Link
-                  href="/"
+                  href={`/?date=${selectedDateKey}`}
                   className="rounded-full border border-line px-4 py-2 text-sm"
                 >
                   Cancel edit
@@ -309,6 +353,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
             <form action={upsertEventAction} className="mt-5 space-y-4">
               <input name="id" type="hidden" defaultValue={editingEvent?.id ?? ""} />
+              <input name="selectedDate" type="hidden" value={selectedDateKey} />
 
               <label className="block space-y-2">
                 <span className="text-sm font-medium">Title</span>
@@ -329,11 +374,7 @@ export default async function Home({ searchParams }: HomeProps) {
                     name="startAt"
                     type="datetime-local"
                     required
-                    defaultValue={
-                      editingEvent?.startAt
-                        ? toLocalInputValue(editingEvent.startAt)
-                        : toLocalInputValue(new Date().toISOString())
-                    }
+                    defaultValue={formStartDefault}
                     className="w-full rounded-2xl border border-line bg-surface px-4 py-3 outline-none transition focus:border-accent"
                   />
                 </label>
@@ -344,11 +385,7 @@ export default async function Home({ searchParams }: HomeProps) {
                     name="endAt"
                     type="datetime-local"
                     required
-                    defaultValue={
-                      editingEvent?.endAt
-                        ? toLocalInputValue(editingEvent.endAt)
-                        : toLocalInputValue(oneHourLater.toISOString())
-                    }
+                    defaultValue={formEndDefault}
                     className="w-full rounded-2xl border border-line bg-surface px-4 py-3 outline-none transition focus:border-accent"
                   />
                 </label>
@@ -382,7 +419,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   {editingEvent ? "Save changes" : "Add event"}
                 </button>
                 <Link
-                  href="/"
+                  href={`/?date=${selectedDateKey}`}
                   className="rounded-full border border-line px-5 py-3 text-sm font-medium"
                 >
                   Reset form
@@ -393,13 +430,18 @@ export default async function Home({ searchParams }: HomeProps) {
 
           <section className="rounded-[28px] border border-line bg-surface p-5 shadow-[0_20px_60px_rgba(84,58,28,0.08)] sm:p-6">
             <p className="font-mono text-xs uppercase tracking-[0.24em] text-ink-muted">
-              Saved events
+              Selected day
             </p>
-            <h2 className="mt-2 text-2xl font-semibold">Manage what you already stored</h2>
+            <h2 className="mt-2 text-2xl font-semibold">{formatDayTitle(selectedDate)}</h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              {selectedDayEvents.length > 0
+                ? "Only events from the selected calendar day are shown here."
+                : "No events saved on this selected day yet."}
+            </p>
 
             <div className="mt-5 space-y-3">
-              {upcomingEvents.length > 0 ? (
-                upcomingEvents.map((item) => (
+              {selectedDayEvents.length > 0 ? (
+                selectedDayEvents.map((item) => (
                   <article
                     key={item.id}
                     className="rounded-[24px] border border-line bg-white px-4 py-4"
@@ -421,13 +463,14 @@ export default async function Home({ searchParams }: HomeProps) {
 
                       <div className="flex gap-2">
                         <Link
-                          href={`/?edit=${item.id}`}
+                          href={`/?date=${selectedDateKey}&edit=${item.id}`}
                           className="rounded-full border border-line px-4 py-2 text-sm"
                         >
                           Edit
                         </Link>
                         <form action={deleteEventAction}>
                           <input type="hidden" name="id" value={item.id} />
+                          <input type="hidden" name="selectedDate" value={selectedDateKey} />
                           <button
                             type="submit"
                             className="rounded-full bg-[#2b211a] px-4 py-2 text-sm text-white"
@@ -441,8 +484,8 @@ export default async function Home({ searchParams }: HomeProps) {
                 ))
               ) : (
                 <div className="rounded-[24px] border border-dashed border-line bg-white px-4 py-10 text-center text-sm text-ink-muted">
-                  No saved events yet. Add one from the form to start using your local
-                  schedule database.
+                  No saved events on {formatShortDate(selectedDate)} yet. Add one from
+                  the form to start using your local schedule database.
                 </div>
               )}
             </div>

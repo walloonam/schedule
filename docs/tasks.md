@@ -16,7 +16,7 @@ Set up the initial application and deliver the Phase 1 MVP foundation.
 - [x] Build monthly calendar view
 - [x] Build Today view
 - [x] Add empty states
-- [ ] Add quick navigation between calendar and Today view
+- [x] Add quick navigation between calendar and Today view
 
 ## Phase 3: Event CRUD
 
@@ -24,13 +24,13 @@ Set up the initial application and deliver the Phase 1 MVP foundation.
 - [x] Support create event flow
 - [x] Support edit event flow
 - [x] Support delete event flow
-- [ ] Add basic validation
+- [x] Add basic validation
 
 ## Phase 4: MVP Completion
 
 - [ ] Support all-day events
 - [ ] Support notes field
-- [ ] Verify event updates across views
+- [x] Verify event updates across views
 - [ ] Add basic visual polish
 
 ## Later Phases

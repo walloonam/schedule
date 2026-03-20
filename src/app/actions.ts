@@ -18,8 +18,32 @@ const normalizeDateTime = (value: FormDataEntryValue | null, fallbackHour: strin
   return raw.length === 16 ? `${raw}:00` : raw;
 };
 
+const buildReturnPath = (options: {
+  selectedDate?: string;
+  editId?: string;
+  error?: string;
+}) => {
+  const params = new URLSearchParams();
+
+  if (options.selectedDate) {
+    params.set("date", options.selectedDate);
+  }
+
+  if (options.editId) {
+    params.set("edit", options.editId);
+  }
+
+  if (options.error) {
+    params.set("error", options.error);
+  }
+
+  const query = params.toString();
+  return query ? `/?${query}` : "/";
+};
+
 export async function upsertEventAction(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
+  const selectedDate = String(formData.get("selectedDate") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
   const notes = String(formData.get("notes") ?? "");
   const allDay = formData.get("allDay") === "on";
@@ -27,11 +51,23 @@ export async function upsertEventAction(formData: FormData) {
   const endAt = normalizeDateTime(formData.get("endAt"), allDay ? "23:59" : "10:00");
 
   if (!title || !startAt || !endAt) {
-    redirect("/?error=missing");
+    redirect(
+      buildReturnPath({
+        selectedDate,
+        editId: id || undefined,
+        error: "missing",
+      }),
+    );
   }
 
   if (new Date(startAt).getTime() > new Date(endAt).getTime()) {
-    redirect(id ? `/?edit=${id}&error=time` : "/?error=time");
+    redirect(
+      buildReturnPath({
+        selectedDate,
+        editId: id || undefined,
+        error: "time",
+      }),
+    );
   }
 
   saveEvent({
@@ -44,16 +80,17 @@ export async function upsertEventAction(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect("/");
+  redirect(buildReturnPath({ selectedDate }));
 }
 
 export async function deleteEventAction(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
+  const selectedDate = String(formData.get("selectedDate") ?? "").trim();
 
   if (id) {
     deleteEvent(id);
     revalidatePath("/");
   }
 
-  redirect("/");
+  redirect(buildReturnPath({ selectedDate }));
 }

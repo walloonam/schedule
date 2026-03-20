@@ -81,6 +81,10 @@ export function listMonthEvents(monthStartIso: string, monthEndIso: string) {
 }
 
 export function listTodayEvents(dayStartIso: string, dayEndIso: string) {
+  return listDayEvents(dayStartIso, dayEndIso);
+}
+
+export function listDayEvents(dayStartIso: string, dayEndIso: string) {
   const rows = db
     .prepare(
       `
