@@ -31,7 +31,14 @@ Set up the initial application and deliver the Phase 1 MVP foundation.
 - [ ] Support all-day events
 - [ ] Support notes field
 - [x] Verify event updates across views
-- [ ] Add basic visual polish
+- [x] Add basic visual polish
+
+## Recent Improvements
+
+- [x] Add selected-day calendar workflow
+- [x] Add previous/next month navigation
+- [x] Add Today jump in the calendar header
+- [x] Expand the calendar grid to a full 6-week layout
 
 ## Later Phases
 

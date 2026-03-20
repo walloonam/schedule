@@ -20,6 +20,9 @@
 - Event form defaults to the selected calendar day
 - Selected-day event list filters records by the chosen date
 - Saved event list supports edit/delete from the selected day view
+- Month navigation now supports previous/next month browsing
+- Today jump returns the calendar to the current month and day
+- Calendar grid now renders a full 6-week layout
 
 ## Important Files
 
@@ -52,10 +55,10 @@
 
 ## Recommended Next Steps
 
-1. Add month navigation for previous/next month
-2. Improve feedback after save/delete
-3. Add selected-day summary or mini agenda in the calendar area
-4. Add stronger validation polish for all-day behavior
+1. Improve feedback after save/delete
+2. Add selected-day summary or mini agenda in the calendar area
+3. Add stronger validation polish for all-day behavior
+4. Normalize date handling more explicitly before recurrence work
 5. Add recurring events later after the base CRUD flow is stable
 
 ## How To Continue On Another Computer
@@ -71,4 +74,4 @@
 
 ## Suggested Prompt For Next Session
 
-`Read docs/product-plan.md, docs/tasks.md, and docs/handoff.md, understand the current schedule app state, and continue with month navigation and selected-day UX improvements.`
+`Read docs/product-plan.md, docs/tasks.md, and docs/handoff.md, understand the current schedule app state, and continue with save/delete feedback plus selected-day UX improvements.`

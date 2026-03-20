@@ -20,10 +20,15 @@ const normalizeDateTime = (value: FormDataEntryValue | null, fallbackHour: strin
 
 const buildReturnPath = (options: {
   selectedDate?: string;
+  selectedMonth?: string;
   editId?: string;
   error?: string;
 }) => {
   const params = new URLSearchParams();
+
+  if (options.selectedMonth) {
+    params.set("month", options.selectedMonth);
+  }
 
   if (options.selectedDate) {
     params.set("date", options.selectedDate);
@@ -44,6 +49,7 @@ const buildReturnPath = (options: {
 export async function upsertEventAction(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
   const selectedDate = String(formData.get("selectedDate") ?? "").trim();
+  const selectedMonth = String(formData.get("selectedMonth") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
   const notes = String(formData.get("notes") ?? "");
   const allDay = formData.get("allDay") === "on";
@@ -53,6 +59,7 @@ export async function upsertEventAction(formData: FormData) {
   if (!title || !startAt || !endAt) {
     redirect(
       buildReturnPath({
+        selectedMonth,
         selectedDate,
         editId: id || undefined,
         error: "missing",
@@ -63,6 +70,7 @@ export async function upsertEventAction(formData: FormData) {
   if (new Date(startAt).getTime() > new Date(endAt).getTime()) {
     redirect(
       buildReturnPath({
+        selectedMonth,
         selectedDate,
         editId: id || undefined,
         error: "time",
@@ -80,17 +88,18 @@ export async function upsertEventAction(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect(buildReturnPath({ selectedDate }));
+  redirect(buildReturnPath({ selectedMonth, selectedDate }));
 }
 
 export async function deleteEventAction(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
   const selectedDate = String(formData.get("selectedDate") ?? "").trim();
+  const selectedMonth = String(formData.get("selectedMonth") ?? "").trim();
 
   if (id) {
     deleteEvent(id);
     revalidatePath("/");
   }
 
-  redirect(buildReturnPath({ selectedDate }));
+  redirect(buildReturnPath({ selectedMonth, selectedDate }));
 }

@@ -19,6 +19,8 @@ Personal schedule manager for single-user daily planning.
 - Click a calendar day to select it
 - Event form defaults to the selected day
 - Selected-day event filtering
+- Previous/next month navigation
+- Today jump in the calendar header
 
 ## Local Database
 

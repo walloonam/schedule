@@ -11,6 +11,7 @@ import {
 
 type HomeProps = {
   searchParams?: Promise<{
+    month?: string;
     date?: string;
     edit?: string;
     error?: string;
@@ -37,6 +38,9 @@ const formatShortDate = (date: Date) =>
     month: "short",
     day: "numeric",
   }).format(date);
+
+const formatMonthKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
 const formatTime = (value: string, allDay: number) => {
   if (allDay) {
@@ -70,7 +74,7 @@ const buildCalendarDays = (baseDate: Date, eventCountByDay: Map<string, number>)
   const start = startOfMonthGrid(baseDate);
   const days = [];
 
-  for (let index = 0; index < 35; index += 1) {
+  for (let index = 0; index < 42; index += 1) {
     const current = new Date(start);
     current.setDate(start.getDate() + index);
     const key = current.toISOString().slice(0, 10);
@@ -101,6 +105,9 @@ const buildEventCountMap = (events: { startAt: string }[]) => {
 const isValidDateKey = (value: string | undefined) =>
   Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value));
 
+const isValidMonthKey = (value: string | undefined) =>
+  Boolean(value && /^\d{4}-\d{2}$/.test(value));
+
 const buildDateRange = (dateKey: string) => {
   const start = new Date(`${dateKey}T00:00:00`);
   const end = new Date(start);
@@ -108,16 +115,40 @@ const buildDateRange = (dateKey: string) => {
   return { start, end };
 };
 
+const buildMonthDate = (monthKey: string) => {
+  const [year, month] = monthKey.split("-").map(Number);
+  return new Date(year, month - 1, 1);
+};
+
+const clampSelectedDateToMonth = (selectedDateKey: string, monthDate: Date) => {
+  const [year, month] = selectedDateKey.split("-").map(Number);
+
+  if (year === monthDate.getFullYear() && month - 1 === monthDate.getMonth()) {
+    return selectedDateKey;
+  }
+
+  const day = Number(selectedDateKey.slice(8, 10));
+  const safeDay = Math.min(
+    day,
+    new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate(),
+  );
+
+  return `${formatMonthKey(monthDate)}-${String(safeDay).padStart(2, "0")}`;
+};
+
 export default async function Home({ searchParams }: HomeProps) {
   const params = (await searchParams) ?? {};
   const now = new Date();
   const todayKey = now.toISOString().slice(0, 10);
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const visibleMonthKey =
+    params.month && isValidMonthKey(params.month) ? params.month : formatMonthKey(now);
+  const visibleMonth = buildMonthDate(visibleMonthKey);
+  const monthStart = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+  const monthEnd = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
   const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const selectedDateKey =
-    params.date && isValidDateKey(params.date) ? params.date : todayKey;
+  const requestedDateKey = params.date && isValidDateKey(params.date) ? params.date : todayKey;
+  const selectedDateKey = clampSelectedDateToMonth(requestedDateKey, visibleMonth);
   const selectedDateRange = buildDateRange(selectedDateKey);
 
   const monthEvents = listMonthEvents(monthStart.toISOString(), monthEnd.toISOString());
@@ -129,9 +160,14 @@ export default async function Home({ searchParams }: HomeProps) {
   );
   const editingEvent = params.edit ? getEventById(params.edit) : null;
   const selectedDate = new Date(`${selectedDateKey}T00:00:00`);
+  const previousMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
+  const nextMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
+  const previousMonthDateKey = clampSelectedDateToMonth(selectedDateKey, previousMonth);
+  const nextMonthDateKey = clampSelectedDateToMonth(selectedDateKey, nextMonth);
+  const todayMonthKey = formatMonthKey(now);
 
   const eventCountByDay = buildEventCountMap(monthEvents);
-  const calendarDays = buildCalendarDays(now, eventCountByDay);
+  const calendarDays = buildCalendarDays(visibleMonth, eventCountByDay);
   const formTitle = editingEvent ? "Edit event" : "Quick add";
   const formStartDefault = editingEvent?.startAt
     ? toLocalInputValue(editingEvent.startAt)
@@ -174,13 +210,34 @@ export default async function Home({ searchParams }: HomeProps) {
                     Month View
                   </p>
                   <h2 className="mt-2 text-2xl font-semibold">
-                    {formatMonthTitle(now)}
+                    {formatMonthTitle(visibleMonth)}
                   </h2>
                 </div>
 
-                <div className="rounded-full bg-[#fff1ea] px-4 py-2 text-sm font-medium text-[#9c4f2d]">
-                  {monthEvents.length} saved this month
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/?month=${formatMonthKey(previousMonth)}&date=${previousMonthDateKey}`}
+                    className="rounded-full border border-line px-4 py-2 text-sm"
+                  >
+                    Prev
+                  </Link>
+                  <Link
+                    href={`/?month=${todayMonthKey}&date=${todayKey}`}
+                    className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white"
+                  >
+                    Today
+                  </Link>
+                  <Link
+                    href={`/?month=${formatMonthKey(nextMonth)}&date=${nextMonthDateKey}`}
+                    className="rounded-full border border-line px-4 py-2 text-sm"
+                  >
+                    Next
+                  </Link>
                 </div>
+              </div>
+
+              <div className="mt-4 rounded-full bg-[#fff1ea] px-4 py-2 text-sm font-medium text-[#9c4f2d] w-fit">
+                {monthEvents.length} saved this month
               </div>
 
               <div className="mt-6 grid grid-cols-7 gap-2 text-center text-xs font-mono uppercase tracking-[0.2em] text-ink-muted">
@@ -195,7 +252,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 {calendarDays.map((item) => (
                   <Link
                     key={item.key}
-                    href={`/?date=${item.key}`}
+                    href={`/?month=${visibleMonthKey}&date=${item.key}`}
                     className={[
                       "flex min-h-24 flex-col rounded-3xl border px-3 py-3 transition-transform duration-200 hover:-translate-y-0.5 sm:min-h-28",
                       item.key === selectedDateKey
@@ -267,7 +324,7 @@ export default async function Home({ searchParams }: HomeProps) {
                           <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
                         </div>
                         <Link
-                          href={`/?edit=${item.id}`}
+                          href={`/?month=${visibleMonthKey}&date=${selectedDateKey}&edit=${item.id}`}
                           className="rounded-full bg-[#f3e6d8] px-3 py-1 text-xs font-medium text-[#734b2f]"
                         >
                           Edit
@@ -332,7 +389,7 @@ export default async function Home({ searchParams }: HomeProps) {
               </div>
               {editingEvent ? (
                 <Link
-                  href={`/?date=${selectedDateKey}`}
+                  href={`/?month=${visibleMonthKey}&date=${selectedDateKey}`}
                   className="rounded-full border border-line px-4 py-2 text-sm"
                 >
                   Cancel edit
@@ -353,6 +410,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
             <form action={upsertEventAction} className="mt-5 space-y-4">
               <input name="id" type="hidden" defaultValue={editingEvent?.id ?? ""} />
+              <input name="selectedMonth" type="hidden" value={visibleMonthKey} />
               <input name="selectedDate" type="hidden" value={selectedDateKey} />
 
               <label className="block space-y-2">
@@ -419,7 +477,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   {editingEvent ? "Save changes" : "Add event"}
                 </button>
                 <Link
-                  href={`/?date=${selectedDateKey}`}
+                  href={`/?month=${visibleMonthKey}&date=${selectedDateKey}`}
                   className="rounded-full border border-line px-5 py-3 text-sm font-medium"
                 >
                   Reset form
@@ -463,13 +521,14 @@ export default async function Home({ searchParams }: HomeProps) {
 
                       <div className="flex gap-2">
                         <Link
-                          href={`/?date=${selectedDateKey}&edit=${item.id}`}
+                          href={`/?month=${visibleMonthKey}&date=${selectedDateKey}&edit=${item.id}`}
                           className="rounded-full border border-line px-4 py-2 text-sm"
                         >
                           Edit
                         </Link>
                         <form action={deleteEventAction}>
                           <input type="hidden" name="id" value={item.id} />
+                          <input type="hidden" name="selectedMonth" value={visibleMonthKey} />
                           <input type="hidden" name="selectedDate" value={selectedDateKey} />
                           <button
                             type="submit"
